@@ -3,6 +3,24 @@ import { assert } from 'chai';
 
 
 describe('Woosim', function() {
+    describe('woosim-wsp-r240: initialize()', function () {
+        let encoder = new ReceiptPrinterEncoder({ printerModel: 'woosim-wsp-r240' });
+        let result = encoder.initialize().encode();
+
+        it('should leave out FS ., which these printers print as a dot', function () {
+            assert.deepEqual(new Uint8Array([ 27, 64, 27, 77, 0 ]), result);
+        });
+    });
+
+    describe('epson-tm-t88v: initialize()', function () {
+        let encoder = new ReceiptPrinterEncoder({ printerModel: 'epson-tm-t88v' });
+        let result = encoder.initialize().encode();
+
+        it('should be unchanged and still send FS .', function () {
+            assert.deepEqual(new Uint8Array([ 27, 64, 28, 46, 27, 77, 0 ]), result);
+        });
+    });
+
     describe('woosim-wsp-r240: codepage(windows1252).text(€)', function () {
         let encoder = new ReceiptPrinterEncoder({ printerModel: 'woosim-wsp-r240' });
         let result = encoder.codepage('windows1252').text('€').encode();

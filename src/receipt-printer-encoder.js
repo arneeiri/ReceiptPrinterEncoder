@@ -307,7 +307,7 @@ class ReceiptPrinterEncoder {
     /* Get the printer language */
 
     if (this.#options.language === 'esc-pos') {
-      this.#language = new LanguageEscPos();
+      this.#language = new LanguageEscPos(this.#printerCapabilities);
     } else if (this.#options.language === 'star-prnt' || this.#options.language === 'star-line') {
       this.#language = new LanguageStarPrnt();
     } else {

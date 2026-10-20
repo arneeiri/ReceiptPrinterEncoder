@@ -11,21 +11,34 @@ const RASTER_CHUNK_HEIGHT = 255;
  * ESC/POS Language commands
  */
 class LanguageEscPos {
+  #capabilities;
+
+  /**
+     * Create a new language object
+     * @param {object} [capabilities]   Capabilities of the printer, from its printer definition
+     */
+  constructor(capabilities) {
+    this.#capabilities = capabilities || {};
+  }
+
   /**
      * Initialize the printer
      * @return {Array}         Array of bytes to send to the printer
      */
   initialize() {
+    /* Printers without the FS commands ignore FS and print the . of FS . as
+       text, so leave it out for printers that have no character modes */
+
     return [
       {
         type: 'initialize',
         payload: [0x1b, 0x40],
       },
-      {
+      ...(this.#capabilities.characterMode === false ? [] : [{
         type: 'character-mode',
         value: 'single byte',
         payload: [0x1c, 0x2e],
-      },
+      }]),
       {
         type: 'font',
         value: 'A',
