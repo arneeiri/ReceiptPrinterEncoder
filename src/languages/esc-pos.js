@@ -790,6 +790,15 @@ class LanguageEscPos {
      * @return {Array}         Array of bytes to send to the printer
      */
   size(width, height) {
+    /* Woosim printers use GS ! with the width in bits 0 to 2 and the height
+       in bits 4 to 6, the other way around from Epson */
+
+    if (this.#capabilities.size?.command === 'woosim') {
+      return [
+        0x1d, 0x21, (width - 1) | (height - 1) << 4,
+      ];
+    }
+
     return [
       0x1d, 0x21, (height - 1) | (width - 1) << 4,
     ];

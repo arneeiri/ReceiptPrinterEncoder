@@ -18,6 +18,10 @@
             }
         },
 
+        "size": {
+            "command": "woosim"
+        },
+
         "barcodes": {
             "supported": true,
             "symbologies": [

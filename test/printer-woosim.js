@@ -45,6 +45,33 @@ describe('Woosim', function() {
         });
     });
 
+    describe('woosim-wsp-r240: size(2).text(a).size(1)', function () {
+        let encoder = new ReceiptPrinterEncoder({ printerModel: 'woosim-wsp-r240' });
+        let result = encoder.size(2).text('a').size(1).encode();
+
+        it('should use GS ! with the same value as Epson for square sizes', function () {
+            assert.deepEqual(new Uint8Array([ 29, 33, 17, 27, 116, 0, 97, 29, 33, 0, 10, 13 ]), result);
+        });
+    });
+
+    describe('woosim-wsp-r240: size(1, 3).text(a).size(1)', function () {
+        let encoder = new ReceiptPrinterEncoder({ printerModel: 'woosim-wsp-r240' });
+        let result = encoder.size(1, 3).text('a').size(1).encode();
+
+        it('should put the height in bits 4 to 6 of GS !', function () {
+            assert.deepEqual(new Uint8Array([ 29, 33, 32, 27, 116, 0, 97, 29, 33, 0, 10, 13 ]), result);
+        });
+    });
+
+    describe('epson-tm-t88v: size(1, 3).text(a).size(1)', function () {
+        let encoder = new ReceiptPrinterEncoder({ printerModel: 'epson-tm-t88v' });
+        let result = encoder.size(1, 3).text('a').size(1).encode();
+
+        it('should be unchanged and put the height in bits 0 to 2 of GS !', function () {
+            assert.deepEqual(new Uint8Array([ 29, 33, 2, 27, 116, 0, 97, 29, 33, 0, 10, 13 ]), result);
+        });
+    });
+
     describe('woosim-wsp-r240: codepage(windows1252).text(€)', function () {
         let encoder = new ReceiptPrinterEncoder({ printerModel: 'woosim-wsp-r240' });
         let result = encoder.codepage('windows1252').text('€').encode();
