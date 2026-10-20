@@ -285,6 +285,7 @@ class ReceiptPrinterEncoder {
       defaults.newline = this.#printerCapabilities?.newline || defaults.newline;
       defaults.feedBeforeCut = this.#printerCapabilities?.cutter?.feed || defaults.feedBeforeCut;
       defaults.imageMode = this.#printerCapabilities?.images?.mode || defaults.imageMode;
+      defaults.codepageCandidates = this.#printerCapabilities?.codepageCandidates || defaults.codepageCandidates;
     }
 
     /* Merge options */

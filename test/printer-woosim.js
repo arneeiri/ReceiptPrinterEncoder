@@ -113,7 +113,25 @@ describe('Woosim', function() {
         let result = encoder.codepage('auto').text('€').encode();
 
         it('should not select a code page above 5, the printer only has 0 to 5', function () {
-            assert.deepEqual(new Uint8Array([ 27, 116, 0, 63, 10, 13 ]), result);
+            assert.deepEqual(new Uint8Array([ 27, 116, 2, 63, 10, 13 ]), result);
+        });
+    });
+
+    describe('woosim-porti-s3040: codepage(auto).text(æ)', function () {
+        let encoder = new ReceiptPrinterEncoder({ printerModel: 'woosim-porti-s3040' });
+        let result = encoder.codepage('auto').text('æ').encode();
+
+        it('should prefer cp850 over cp437, as listed in codepageCandidates', function () {
+            assert.deepEqual(new Uint8Array([ 27, 116, 2, 145, 10, 13 ]), result);
+        });
+    });
+
+    describe('woosim-porti-s3040: rule()', function () {
+        let encoder = new ReceiptPrinterEncoder({ printerModel: 'woosim-porti-s3040' });
+        let result = encoder.rule({ width: 3 }).encode();
+
+        it('should still draw the rule in cp437', function () {
+            assert.deepEqual(new Uint8Array([ 27, 116, 0, 196, 196, 196, 10, 13 ]), result);
         });
     });
 

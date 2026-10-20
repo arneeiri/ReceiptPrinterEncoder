@@ -10,6 +10,7 @@
         "language": "esc-pos",
         "characterMode": false,
         "codepages": "woosim/legacy",
+        "codepageCandidates": ["cp850", "cp865", "cp437"],
         "fonts": {
             "A": {
                 "size": "9x24",
