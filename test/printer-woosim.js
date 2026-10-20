@@ -21,6 +21,30 @@ describe('Woosim', function() {
         });
     });
 
+    describe('woosim-wsp-r240: qrcode(hello)', function () {
+        let encoder = new ReceiptPrinterEncoder({ printerModel: 'woosim-wsp-r240' });
+        let result = encoder.qrcode('hello').encode();
+
+        it('should select QR code with GS Z 2 and print it with ESC Z', function () {
+            assert.deepEqual(new Uint8Array([
+                29, 90, 2,
+                27, 90, 0, 77, 6, 5, 0, 104, 101, 108, 108, 111, 10, 13,
+            ]), result);
+        });
+    });
+
+    describe('woosim-wsp-r240: qrcode(hello, { size: 4, errorlevel: h })', function () {
+        let encoder = new ReceiptPrinterEncoder({ printerModel: 'woosim-wsp-r240' });
+        let result = encoder.qrcode('hello', { size: 4, errorlevel: 'h' }).encode();
+
+        it('should send the error correction level as a letter and the module size', function () {
+            assert.deepEqual(new Uint8Array([
+                29, 90, 2,
+                27, 90, 0, 72, 4, 5, 0, 104, 101, 108, 108, 111, 10, 13,
+            ]), result);
+        });
+    });
+
     describe('woosim-wsp-r240: codepage(windows1252).text(€)', function () {
         let encoder = new ReceiptPrinterEncoder({ printerModel: 'woosim-wsp-r240' });
         let result = encoder.codepage('windows1252').text('€').encode();

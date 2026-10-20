@@ -249,6 +249,10 @@ class LanguageEscPos {
      * @return {Array}             Array of bytes to send to the printer
      */
   qrcode(value, options) {
+    if (this.#capabilities.qrcode?.command === 'woosim') {
+      return this.#qrcodeWoosim(value, options);
+    }
+
     const result = [];
 
     /* Model */
@@ -339,6 +343,56 @@ class LanguageEscPos {
     );
 
     return result;
+  }
+
+  /**
+     * Generate a QR code with the Woosim command set: GS Z 2 selects QR code as
+     * the 2D barcode type, ESC Z m n k dL dH d1...dn prints it, with m the
+     * version (0 is automatic), n the error correction level as 'L', 'M', 'Q'
+     * or 'H', and k the module size (Woosim Command Manual 2.6, page 47)
+     * @param {string} value        Value to encode
+     * @param {object} options      Configuration object
+     * @return {Array}             Array of bytes to send to the printer
+     */
+  #qrcodeWoosim(value, options) {
+    if (typeof options.size !== 'number') {
+      throw new Error('Size must be a number');
+    }
+
+    if (options.size < 1 || options.size > 8) {
+      throw new Error('Size must be between 1 and 8');
+    }
+
+    const errorlevels = {
+      'l': 0x4c,
+      'm': 0x4d,
+      'q': 0x51,
+      'h': 0x48,
+    };
+
+    if (!(options.errorlevel in errorlevels)) {
+      throw new Error('Error level must be l, m, q or h');
+    }
+
+    const bytes = CodepageEncoder.encode(value, 'iso8859-1');
+
+    return [
+      {
+        type: 'qrcode',
+        property: 'type',
+        value: 'qrcode',
+        payload: [0x1d, 0x5a, 0x02],
+      },
+      {
+        type: 'qrcode',
+        command: 'print',
+        value,
+        payload: [
+          0x1b, 0x5a, 0x00, errorlevels[options.errorlevel], options.size,
+          bytes.length & 0xff, (bytes.length >> 8) & 0xff, ...bytes,
+        ],
+      },
+    ];
   }
 
   /**

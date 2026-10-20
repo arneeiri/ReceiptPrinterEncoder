@@ -26,8 +26,9 @@
             ]
         },
         "qrcode": {
-            "supported": false,
-            "models": []
+            "supported": true,
+            "models": ["2"],
+            "command": "woosim"
         },
         "pdf417": {
             "supported": false
