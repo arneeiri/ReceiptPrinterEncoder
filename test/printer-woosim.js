@@ -72,6 +72,24 @@ describe('Woosim', function() {
         });
     });
 
+    describe('woosim-porti-s3040: size(2).text(a).size(1)', function () {
+        let encoder = new ReceiptPrinterEncoder({ printerModel: 'woosim-porti-s3040' });
+        let result = encoder.size(2).text('a').size(1).encode();
+
+        it('should use ESC ! and keep the font bit of the printer definition', function () {
+            assert.deepEqual(new Uint8Array([ 27, 33, 49, 27, 116, 0, 97, 27, 33, 1, 10, 13 ]), result);
+        });
+    });
+
+    describe('epson-tm-t88v: size(2).text(a).size(1)', function () {
+        let encoder = new ReceiptPrinterEncoder({ printerModel: 'epson-tm-t88v' });
+        let result = encoder.size(2).text('a').size(1).encode();
+
+        it('should be unchanged and use GS !', function () {
+            assert.deepEqual(new Uint8Array([ 29, 33, 17, 27, 116, 0, 97, 29, 33, 0, 10, 13 ]), result);
+        });
+    });
+
     describe('woosim-wsp-r240: codepage(windows1252).text(€)', function () {
         let encoder = new ReceiptPrinterEncoder({ printerModel: 'woosim-wsp-r240' });
         let result = encoder.codepage('windows1252').text('€').encode();

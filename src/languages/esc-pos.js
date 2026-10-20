@@ -790,6 +790,18 @@ class LanguageEscPos {
      * @return {Array}         Array of bytes to send to the printer
      */
   size(width, height) {
+    /* Printers that print GS ! sizes wrong, but double width and height with
+       ESC !, which only knows single and double. The print mode bits of the
+       printer definition are kept, so ESC ! does not switch to another font */
+
+    if (this.#capabilities.size?.command === 'print-mode') {
+      const mode = this.#capabilities.size.printMode || 0;
+
+      return [
+        0x1b, 0x21, mode | (height > 1 ? 0x10 : 0) | (width > 1 ? 0x20 : 0),
+      ];
+    }
+
     /* Woosim printers use GS ! with the width in bits 0 to 2 and the height
        in bits 4 to 6, the other way around from Epson */
 

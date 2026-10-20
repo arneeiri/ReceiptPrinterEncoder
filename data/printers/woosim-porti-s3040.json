@@ -17,6 +17,11 @@
             }
         },
 
+        "size": {
+            "command": "print-mode",
+            "printMode": 1
+        },
+
         "barcodes": {
             "supported": true,
             "symbologies": [
